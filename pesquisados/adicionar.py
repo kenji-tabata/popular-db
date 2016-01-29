@@ -40,11 +40,25 @@ class Conexao:
         )
 
         pesq_comple = Table('pesq_comple', meta,
-            Column('id_pesq', Integer, primary_key=True),
+            Column('id_pesq', Integer, ForeignKey("pesq_main.id"), nullable=False),
+            Column('dt_nasc', Date, nullable=False),
+            Column('endereco', String(100), nullable=False),
+            Column('bairro', String(50), nullable=False),
+            Column('cidade', String(50), nullable=False),
+            Column('uf', String(2), nullable=False),
+            Column('cep', String(10), nullable=False),
+            Column('telefone_res', String(20), nullable=False),
+            Column('telefone_cel', String(20), nullable=False),
+            Column('telefone_com', String(20), nullable=False),
+            Column('email', String(150), nullable=False),
+            Column('formacao', String(50), nullable=False),
+            Column('empresa', String(50), nullable=False),
+            Column('dt_adm', String(30), nullable=False),
+            Column('dt_preen', Date, nullable=False)
         )
 
         pesq_perf = Table('pesq_perf', meta,
-            Column('id_pesq', Integer, primary_key=True),
+            Column('id_pesq', Integer, ForeignKey("pesq_main.id")),
         )
 
         meta.drop_all(engine)
