@@ -1,5 +1,6 @@
 from conexao import Conexao
-from modelos import PesqMain, Employees
+from modelos import PesqMain, PesqComple, PesqPerf, Employees
+from datetime import date
 
 # Dados...
 conexao = Conexao()
@@ -51,21 +52,26 @@ print("Lendo employees...")
 employees = conexao_employees.query(Employees).limit(add_quantos_registros).all()
 print("Employees carregado na memória...")
 
-print("Lendo titles...")
-titles = conexao_employees.query
-
 #
 # Adicionando registros...
 #
 print("Adicionando registros...")
 for emp in employees:
+    # Adicionando registros do PesqMain
     novo_pesq_main = PesqMain(
         emp.emp_no, emp.first_name + " "+ emp.last_name, None, 'preenchido',
-        emp.gender, '', emp.title.title
+        emp.gender, '', emp.titles.title
     )
     conexao_sdd.add(novo_pesq_main)
     conexao_sdd.commit()
     # print("Registro %s adicionado" % emp.emp_no)
+
+    # Adicionando registros do PesqComple
+    novo_pesq_comple = PesqComple(
+        emp.emp_no, emp.birth_date, '', '', '', '', '', '', '', '', '', '', '', '', date.today()
+    )
+    conexao_sdd.add(novo_pesq_comple)
+    conexao_sdd.commit()
 
 print("Registros adicionados")
 print("Concluído!")
