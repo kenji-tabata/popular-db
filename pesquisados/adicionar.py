@@ -1,128 +1,59 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData, Column, Integer, String, Date
+from conexao import Conexao
+from modelos import PesqMain, Employees
 
-class Conexao:
-    def __init__(self):
-        self.user = "root"
-        self.psw  = "1234"
-        self.host = "localhost"
-        self.port = "3306"
-
-    def retornar_engine(self, basedados):
-        connection_string = 'mysql+pymysql://%s:%s@%s:%s/%s' % (
-            self.user,
-            self.psw,
-            self.host,
-            self.port,
-            basedados
-        )
-        return create_engine(connection_string, echo=False) # echo = True, ativa debug
-
-    def conectar(self, engine):
-        Session = sessionmaker(bind=engine)
-        return Session()
-
-    def drop_and_create_all_table(self, engine):
-        meta = MetaData()
-        
-        # Carrega todas as tabelas disponiveis na conexão e todas suas definições
-        meta.reflect(engine)
-
-        print("Deletando todas as tabelas...")
-        meta.drop_all(engine)
-        
-        print("Adicionando todas as tabelas...")
-        meta.create_all(engine)
-
-    def truncate_table(self, engine, table):
-        meta = MetaData()
-        
-        # Carrega todas as tabelas disponiveis na conexão e todas suas definições
-        meta.reflect(engine)
-        
-        table = meta.tables[table]
-        print(table.delete())
-        engine.execute(table.delete())
-        
-    def truncate_all_tables(self, engine):
-        meta = MetaData()
-        
-        # Carrega todas as tabelas disponiveis na conexão e todas suas definições
-        meta.reflect(engine)
-        
-        for table in reversed(meta.sorted_tables):
-            print (table.delete())
-            engine.execute(table.delete())
-
-# Modelos do pesquisados
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
-
-class PesqMain(Base):
-    __tablename__ = 'pesq_main'
-
-    id       = Column(Integer, primary_key=True)
-    id_grupo = Column(Integer)
-    codigo   = Column(String(50))
-    status   = Column(String(20))
-    oculto   = Column(Integer)
-    nome     = Column(String(150))
-    sexo     = Column(String(1))
-    cpf      = Column(String(15))
-    cargo    = Column(String(50))
-
-    def __init__(self, id, nome, codigo, status, sexo, cpf, cargo):
-        self.id     = id
-        self.oculto = 0
-        self.nome   = nome
-        self.codigo = codigo
-        self.status = status
-        self.sexo   = sexo
-        self.cpf    = cpf
-        self.cargo  = cargo
-
-    def __repr__(self):
-        return "<PesqMain(%s, %s, %s, %s)>" % (
-            self.nome, self.codigo, self.status, self.sexo)
-
-# Modelos do Employees (Dados a serem enviados)
-class Employees(Base):
-    __tablename__ = 'employees'
-
-    emp_no     = Column(Integer, primary_key=True)
-    birth_date = Column(Date)
-    first_name = Column(String(14))
-    last_name  = Column(String(16))
-    gender     = Column(String(1))
-    hire_date  = Column(Date)
-
-    def __init__(self, first_name, last_name, birth_date, gender, hire_date):
-        self.first_name = first_name
-        self.last_name  = last_name
-        self.birth_date = birth_date
-        self.gender     = gender
-        self.hire_date  = hire_date
-
-    def __repr__(self):
-        return "<Employees(%s, %s, %s, %s)>" % (
-            self.first_name, self.last_name, self.birth_date, self.gender)
-
+# Dados...
 conexao = Conexao()
-engine_sdd = conexao.retornar_engine('sdd_apres')
-connection_sdd = conexao.conectar(engine_sdd)
-#conexao.truncate_table(engine_sdd, 'pesq_main')
-conexao.truncate_all_tables(engine_sdd)
+conexao.user = "root"
+conexao.psw  = "1234"
+conexao.host = "localhost"
+conexao.port = "3306"
 
-engine_emp = conexao.retornar_engine('employees')
+base_dados_exemplo = 'employees'
+adicionar_na_base_dados = 'sdd_apres'
+
+add_quantos_registros = 5
+
+#
+# Executando conexões...
+#
+print("Conectando as base de dados...")
+# Define a base de dados de exemplo
+engine_emp = conexao.retornar_engine(base_dados_exemplo)
+# Conecta com a base de dados `employees`
 connection_emp = conexao.conectar(engine_emp)
+print("Conectado a base de dados %s" % base_dados_exemplo)
 
+# Qual base de dados que receberá os dados de exemplo 
+engine_sdd = conexao.retornar_engine(adicionar_na_base_dados)
+# Conecta com a base de dados selecionada
+connection_sdd = conexao.conectar(engine_sdd)
+print("Conectado a base de dados %s" % adicionar_na_base_dados)
+
+#
+# Removendo tabelas ou registros...
+#
+# print("Deletando e criando as tabelas...")
+# conexao.deletar_criar_todas_tabelas(engine_sdd)
+# print("Tabelas criadas...")
+
+print("Removendo registros...")
+# Remove todos os registros de uma tabela
+# conexao.limpar_tabela(engine_sdd, 'pesq_main')
+
+# Remove todos os registros de todas as tabelas
+conexao.limpar_todas_tabelas(engine_sdd)
+print("Registros deletados...")
+
+#
+# Lendo registros de exemplo...
+#
 print("Lendo employees...")
-max = 5
-employees = connection_emp.query(Employees).limit(max).all()
-#employees = connection_emp.query(Employees).filter_by(id=1).first()
+employees = connection_emp.query(Employees).limit(add_quantos_registros).all()
+print("Employees carregado na memória...")
 
+#
+# Adicionando registros...
+#
 print("Adicionando registros...")
 for emp in employees:
     novo_pesq_main = PesqMain(emp.emp_no, emp.first_name + " "+ emp.last_name, None, 'preenchido', emp.gender, '', '')
@@ -131,5 +62,10 @@ for emp in employees:
     # print("Registro %s adicionado" % emp.emp_no)
 
 print("Registros adicionados")
+print("Concluído!")
+
+print("Visualizar registros adicionados...")
 pesq = connection_sdd.query(PesqMain).all()
 print(pesq)
+
+
