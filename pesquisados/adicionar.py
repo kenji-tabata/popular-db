@@ -1,23 +1,59 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Table, MetaData, ForeignKey, Boolean, Column, Integer, String, Date
 
 class Conexao:
+    def __init__(self):
+        self.user = "root"
+        self.psw  = "1234"
+        self.host = "localhost"
+        self.port = "3306"
+
     def conectar(self, basedados):
         connection_string = 'mysql+pymysql://%s:%s@%s:%s/%s' % (
-            "root",
-            "1234",
-            "localhost",
-            "3306",
+            self.user,
+            self.psw,
+            self.host,
+            self.port,
             basedados
         )
         engine = create_engine(connection_string, echo=False) # echo = True, ativa debug
 
+        self.drop_and_create_table_pesq(engine)
+
         Session = sessionmaker(bind=engine)
         return Session()
 
+    def drop_and_create_table_pesq(self, engine):
+        meta = MetaData()
+
+        pesq_main = Table('pesq_main', meta,
+            Column('id', Integer, primary_key=True),
+            Column('id_grupo', Integer, nullable=True),
+            Column('codigo', String(50), nullable=True),
+            Column('status', String(20), nullable=False),
+            Column('oculto', Boolean, nullable=False),
+            Column('nome', String(150), nullable=False),
+            Column('sexo', String(1), nullable=False),
+            Column('cpf', String(15), nullable=False),
+            Column('cargo', String(50), nullable=False)
+        )
+
+        pesq_comple = Table('pesq_comple', meta,
+            Column('id_pesq', Integer, primary_key=True),
+        )
+
+        pesq_perf = Table('pesq_perf', meta,
+            Column('id_pesq', Integer, primary_key=True),
+        )
+
+        meta.drop_all(engine)
+        meta.create_all(engine)
+
+
+
 # Modelos do pesquisados
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date
 
 Base = declarative_base()
 
