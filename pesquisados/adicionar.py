@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Table, MetaData, ForeignKey, Boolean, Column, Integer, String, Date
+from sqlalchemy import Table, MetaData, ForeignKey, Boolean, Column, Integer, String, Date, Text
 
 class Conexao:
     def __init__(self):
@@ -58,7 +58,27 @@ class Conexao:
         )
 
         pesq_perf = Table('pesq_perf', meta,
-            Column('id_pesq', Integer, ForeignKey("pesq_main.id")),
+            Column('id_pesq', Integer, ForeignKey("pesq_main.id"), nullable=False),
+            Column('id_perf', Integer, nullable=True),
+            Column('base', String(9), nullable=True),
+            Column('lid', Integer, nullable=True),
+            Column('empr', Integer, nullable=True),
+            Column('com', Integer, nullable=True),
+            Column('arg', Integer, nullable=True),
+            Column('vel', Integer, nullable=True),
+            Column('prat', Integer, nullable=True),
+            Column('det', Integer, nullable=True),
+            Column('orga', Integer, nullable=True),
+            Column('cnor', Integer, nullable=True),
+            Column('perc', Integer, nullable=True),
+            Column('intu', Integer, nullable=True),
+            Column('crit', Integer, nullable=True),
+            Column('decir', Integer, nullable=True),
+            Column('cria', Integer, nullable=True),
+            Column('ener', Integer, nullable=True),
+            Column('alternativas', Text, nullable=False),
+            Column('el', Text, nullable=True),
+            Column('sit', Text, nullable=True),
         )
 
         meta.drop_all(engine)
