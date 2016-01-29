@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Table, MetaData, ForeignKey, Boolean, Column, Integer, String, Date, Text
+from sqlalchemy import MetaData, Column, Integer, String, Date
 
 class Conexao:
     def __init__(self):
@@ -9,7 +9,7 @@ class Conexao:
         self.host = "localhost"
         self.port = "3306"
 
-    def conectar(self, basedados):
+    def retornar_engine(self, basedados):
         connection_string = 'mysql+pymysql://%s:%s@%s:%s/%s' % (
             self.user,
             self.psw,
@@ -17,74 +17,43 @@ class Conexao:
             self.port,
             basedados
         )
-        engine = create_engine(connection_string, echo=False) # echo = True, ativa debug
+        return create_engine(connection_string, echo=False) # echo = True, ativa debug
 
-        self.drop_and_create_table_pesq(engine)
-
+    def conectar(self, engine):
         Session = sessionmaker(bind=engine)
         return Session()
 
-    def drop_and_create_table_pesq(self, engine):
+    def drop_and_create_all_table(self, engine):
         meta = MetaData()
+        
+        # Carrega todas as tabelas disponiveis na conexão e todas suas definições
+        meta.reflect(engine)
 
-        pesq_main = Table('pesq_main', meta,
-            Column('id', Integer, primary_key=True),
-            Column('id_grupo', Integer, nullable=True),
-            Column('codigo', String(50), nullable=True),
-            Column('status', String(20), nullable=False),
-            Column('oculto', Boolean, nullable=False),
-            Column('nome', String(150), nullable=False),
-            Column('sexo', String(1), nullable=False),
-            Column('cpf', String(15), nullable=False),
-            Column('cargo', String(50), nullable=False)
-        )
-
-        pesq_comple = Table('pesq_comple', meta,
-            Column('id_pesq', Integer, ForeignKey("pesq_main.id"), nullable=False),
-            Column('dt_nasc', Date, nullable=False),
-            Column('endereco', String(100), nullable=False),
-            Column('bairro', String(50), nullable=False),
-            Column('cidade', String(50), nullable=False),
-            Column('uf', String(2), nullable=False),
-            Column('cep', String(10), nullable=False),
-            Column('telefone_res', String(20), nullable=False),
-            Column('telefone_cel', String(20), nullable=False),
-            Column('telefone_com', String(20), nullable=False),
-            Column('email', String(150), nullable=False),
-            Column('formacao', String(50), nullable=False),
-            Column('empresa', String(50), nullable=False),
-            Column('dt_adm', String(30), nullable=False),
-            Column('dt_preen', Date, nullable=False)
-        )
-
-        pesq_perf = Table('pesq_perf', meta,
-            Column('id_pesq', Integer, ForeignKey("pesq_main.id"), nullable=False),
-            Column('id_perf', Integer, nullable=True),
-            Column('base', String(9), nullable=True),
-            Column('lid', Integer, nullable=True),
-            Column('empr', Integer, nullable=True),
-            Column('com', Integer, nullable=True),
-            Column('arg', Integer, nullable=True),
-            Column('vel', Integer, nullable=True),
-            Column('prat', Integer, nullable=True),
-            Column('det', Integer, nullable=True),
-            Column('orga', Integer, nullable=True),
-            Column('cnor', Integer, nullable=True),
-            Column('perc', Integer, nullable=True),
-            Column('intu', Integer, nullable=True),
-            Column('crit', Integer, nullable=True),
-            Column('decir', Integer, nullable=True),
-            Column('cria', Integer, nullable=True),
-            Column('ener', Integer, nullable=True),
-            Column('alternativas', Text, nullable=False),
-            Column('el', Text, nullable=True),
-            Column('sit', Text, nullable=True),
-        )
-
+        print("Deletando todas as tabelas...")
         meta.drop_all(engine)
+        
+        print("Adicionando todas as tabelas...")
         meta.create_all(engine)
 
-
+    def truncate_table(self, engine, table):
+        meta = MetaData()
+        
+        # Carrega todas as tabelas disponiveis na conexão e todas suas definições
+        meta.reflect(engine)
+        
+        table = meta.tables[table]
+        print(table.delete())
+        engine.execute(table.delete())
+        
+    def truncate_all_tables(self, engine):
+        meta = MetaData()
+        
+        # Carrega todas as tabelas disponiveis na conexão e todas suas definições
+        meta.reflect(engine)
+        
+        for table in reversed(meta.sorted_tables):
+            print (table.delete())
+            engine.execute(table.delete())
 
 # Modelos do pesquisados
 from sqlalchemy.ext.declarative import declarative_base
@@ -141,9 +110,13 @@ class Employees(Base):
             self.first_name, self.last_name, self.birth_date, self.gender)
 
 conexao = Conexao()
+engine_sdd = conexao.retornar_engine('sdd_apres')
+connection_sdd = conexao.conectar(engine_sdd)
+#conexao.truncate_table(engine_sdd, 'pesq_main')
+conexao.truncate_all_tables(engine_sdd)
 
-connection_sdd = conexao.conectar('sdd_apres')
-connection_emp = conexao.conectar('employees')
+engine_emp = conexao.retornar_engine('employees')
+connection_emp = conexao.conectar(engine_emp)
 
 print("Lendo employees...")
 max = 5
