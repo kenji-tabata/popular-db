@@ -12,7 +12,7 @@ conexao.port = "3306"
 base_dados_exemplo = 'employees'
 adicionar_na_base_dados = 'sdd_apres'
 
-add_quantos_registros = 5
+add_quantos_registros = 100 # `None` para todos os registros
 
 #
 # Executando conexões...
@@ -39,17 +39,22 @@ print("Conectado a base de dados %s" % adicionar_na_base_dados)
 
 print("Removendo registros...")
 # Remove todos os registros de uma tabela
-# conexao.limpar_tabela(engine_sdd, 'pesq_main')
+conexao.limpar_tabela(engine_sdd, 'pesq_comple')
+conexao.limpar_tabela(engine_sdd, 'pesq_perf')
+conexao.limpar_tabela(engine_sdd, 'pesq_main')
 
 # Remove todos os registros de todas as tabelas
-conexao.limpar_todas_tabelas(engine_sdd)
-print("Registros deletados...")
+# conexao.limpar_todas_tabelas(engine_sdd)
+# print("Registros deletados...")
 
 #
 # Lendo registros de exemplo...
 #
 print("Lendo employees...")
-employees = conexao_employees.query(Employees).limit(add_quantos_registros).all()
+if add_quantos_registros:
+    employees = conexao_employees.query(Employees).limit(add_quantos_registros).all()
+else:
+    employees = conexao_employees.query(Employees).all()
 print("Employees carregado na memória...")
 
 #
@@ -64,7 +69,6 @@ for emp in employees:
     )
     conexao_sdd.add(novo_pesq_main)
     conexao_sdd.commit()
-    # print("Registro %s adicionado" % emp.emp_no)
 
     # Adicionando registros do PesqComple
     novo_pesq_comple = PesqComple(
@@ -73,11 +77,21 @@ for emp in employees:
     conexao_sdd.add(novo_pesq_comple)
     conexao_sdd.commit()
 
+    # Adicionando registros do PesqPerf
+    alt = "4, 14, 24, 28, 31, 33, 35, 36, 39, 67, 69, 72"
+    novo_pesq_perf = PesqPerf(
+        emp.emp_no, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, alt, '', ''
+    )
+    conexao_sdd.add(novo_pesq_perf)
+    conexao_sdd.commit()
+
+    # print("Registro %s adicionado" % emp.emp_no)
+
 print("Registros adicionados")
 print("Concluído!")
 
-print("Visualizar registros adicionados...")
-pesq = conexao_sdd.query(PesqMain).all()
-print(pesq)
+# print("Visualizar registros adicionados...")
+# pesq = conexao_sdd.query(PesqMain).all()
+# print(pesq)
 
 
