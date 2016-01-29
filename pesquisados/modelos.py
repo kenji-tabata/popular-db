@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -12,7 +12,7 @@ class PesqMain(Base):
     id_grupo = Column(Integer, nullable=True)
     codigo   = Column(String(50), nullable=True)
     status   = Column(String(20), nullable=False)
-    oculto   = Column(Integer, nullable=False)
+    oculto   = Column(Boolean, nullable=False)
     nome     = Column(String(150), nullable=False)
     sexo     = Column(String(1), nullable=False)
     cpf      = Column(String(15), nullable=False)
@@ -130,6 +130,8 @@ class PesqPerf(Base):
     def __repr__(self):
         return "<PesqPerf(%s, %s)>" % (
             str(self.id_pesq), self.alternativas)
+
+#from sqlalchemy.orm import backref
 
 # Modelos do Employees (Dados a serem enviados)
 class Employees(Base):
