@@ -15,6 +15,7 @@ adicionar_na_base_dados = 'sdd_apres'
 add_quantos_registros = 100 # `None` para todos os registros
 ver_registros_add     = False
 
+cpf = "123.456.789-00"
 alternativas = ""
 
 #
@@ -68,7 +69,7 @@ for emp in employees:
     # Adicionando registros do PesqMain
     novo_pesq_main = PesqMain(
         emp.emp_no, emp.first_name + " "+ emp.last_name, None, 'preenchido',
-        emp.gender, '', emp.titles.title
+        emp.gender, cpf, emp.titles.title
     )
     conexao_sdd.add(novo_pesq_main)
     conexao_sdd.commit()
