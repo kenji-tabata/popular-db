@@ -62,3 +62,7 @@ Altere a quantidade de registros que serão adicionados
 Caso queira ver o log dos registros sendo adicionados altere para True a variável `ver_registros_add`.
 
     ver_registros_add = True
+
+Para executar o script...
+
+    $ python pesquisados/adicionar.py
