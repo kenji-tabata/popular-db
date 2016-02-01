@@ -13,6 +13,7 @@ base_dados_exemplo = 'employees'
 adicionar_na_base_dados = 'sdd_apres'
 
 add_quantos_registros = 100 # `None` para todos os registros
+ver_registros_add     = False
 
 #
 # Executando conexões...
@@ -85,7 +86,8 @@ for emp in employees:
     conexao_sdd.add(novo_pesq_perf)
     conexao_sdd.commit()
 
-    # print("Registro %s adicionado" % emp.emp_no)
+    if ver_registros_add:
+        print("Registro %s adicionado" % emp.emp_no)
 
 print("Registros adicionados")
 print("Concluído!")
