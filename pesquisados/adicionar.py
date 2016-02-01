@@ -15,6 +15,8 @@ adicionar_na_base_dados = 'sdd_apres'
 add_quantos_registros = 100 # `None` para todos os registros
 ver_registros_add     = False
 
+alternativas = ""
+
 #
 # Executando conexões...
 #
@@ -79,9 +81,8 @@ for emp in employees:
     conexao_sdd.commit()
 
     # Adicionando registros do PesqPerf
-    alt = "4, 14, 24, 28, 31, 33, 35, 36, 39, 67, 69, 72"
     novo_pesq_perf = PesqPerf(
-        emp.emp_no, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, alt, '', ''
+        emp.emp_no, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, alternativas, '', ''
     )
     conexao_sdd.add(novo_pesq_perf)
     conexao_sdd.commit()
