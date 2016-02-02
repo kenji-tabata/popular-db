@@ -27,6 +27,7 @@ id_dec_9_item = 9
 # Id do sexto último item
 id_dec_4_item = 4
 
+# Quais serão pontuados
 lista_pesq_alvo = [11002, 11003, 11004] # 3 dos 50
 lista_pesq_3_primeiros = [11001] # 47 dos 50
 lista_pesq_3_ultimos = [10001, 10002] # 7 dos 10
