@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Text, Boolean
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -89,10 +90,9 @@ class DecEixoY(Base):
 class DecEixoYPesq(Base):
     __tablename__ = 'dec_eixo_y_pesq'
 
-    id      = Column(Integer, primary_key=True)
-    id_dec  = Column(Integer, nullable=False)
-    id_pesq = Column(Integer, nullable=False)
-    id_item = Column(Integer, nullable=False)
+    id_dec  = Column(Integer, primary_key=True)
+    id_pesq = Column(Integer, primary_key=True)
+    id_item = Column(Integer, primary_key=True)
     gap     = Column(Boolean, nullable=False)
 
     def __init__(self, id_dec, id_pesq, id_item, gap):
