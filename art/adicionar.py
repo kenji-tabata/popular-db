@@ -28,10 +28,10 @@ id_dec_9_item = 9
 id_dec_4_item = 4
 
 # Quais serão pontuados
-lista_pesq_alvo = [11002, 11003, 11004] # 3 dos 50
-lista_pesq_3_primeiros = [11001] # 47 dos 50
-lista_pesq_3_ultimos = [10001, 10002] # 7 dos 10
-lista_pesq_6_ultimos = [10010, 10011] # 10 dos 20
+lista_pesq_alvo = [11002] # 3
+lista_pesq_3_primeiros = [11001] # 50
+lista_pesq_3_ultimos = [10001, 10002, 10003] # 10
+lista_pesq_6_ultimos = [11003, 11004] # 20
 
 print("Conectando as base de dados...")
 engine = conexao.retornar_engine(adicionar_na_base_dados)
