@@ -10,7 +10,7 @@ class PesqMain(Base):
 
     id       = Column(Integer, primary_key=True)
     id_grupo = Column(Integer, nullable=True)
-    codigo   = Column(String(50), nullable=True)
+#    codigo   = Column(String(50), nullable=True) # Verificar se a tabela possui o campo código
     status   = Column(String(20), nullable=False)
     oculto   = Column(Boolean, nullable=False)
     nome     = Column(String(150), nullable=False)

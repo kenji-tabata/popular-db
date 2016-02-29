@@ -9,11 +9,19 @@ conexao.psw  = "1234"
 conexao.host = "localhost"
 conexao.port = "3306"
 
-base_dados_exemplo = 'employees'
-adicionar_na_base_dados = 'sdd_apres'
+base_dados_exemplo      = 'employees'
+adicionar_na_base_dados = 'cli_apres'
+ver_registros_add       = False
+remover_add_tabelas     = False
 
-add_quantos_registros = 100 # `None` para todos os registros
-ver_registros_add     = False
+# Adiciona a partir do registro 11001, remove todos os registros anteriores
+adicionar_do_inicio = True
+add_quantos_registros = 20 # `None` para todos os registros
+
+# Adiciona a partir de um determinado intervalo, ideal para manter os regitros atuais
+adicionar_entre_os_ids = False
+id_inicial  = 11025
+id_final    = 11030
 
 cpf = "123.456.789-00"
 alternativas = ""
@@ -37,15 +45,17 @@ print("Conectado a base de dados %s" % adicionar_na_base_dados)
 #
 # Removendo tabelas ou registros...
 #
-# print("Deletando e criando as tabelas...")
-# conexao.deletar_criar_todas_tabelas(engine_sdd)
-# print("Tabelas criadas...")
+if remover_add_tabelas:
+    print("Deletando e criando as tabelas...")
+    conexao.deletar_criar_todas_tabelas(engine_sdd)
+    print("Tabelas criadas...")
 
-print("Removendo registros...")
-# Remove todos os registros de uma tabela
-conexao.limpar_tabela(engine_sdd, 'pesq_comple')
-conexao.limpar_tabela(engine_sdd, 'pesq_perf')
-conexao.limpar_tabela(engine_sdd, 'pesq_main')
+if adicionar_do_inicio:
+    print("Removendo registros...")
+    # Remove todos os registros de uma tabela
+    conexao.limpar_tabela(engine_sdd, 'pesq_comple')
+    conexao.limpar_tabela(engine_sdd, 'pesq_perf')
+    conexao.limpar_tabela(engine_sdd, 'pesq_main')
 
 # Remove todos os registros de todas as tabelas
 # conexao.limpar_todas_tabelas(engine_sdd)
@@ -55,8 +65,10 @@ conexao.limpar_tabela(engine_sdd, 'pesq_main')
 # Lendo registros de exemplo...
 #
 print("Lendo employees...")
-if add_quantos_registros:
+if add_quantos_registros and adicionar_do_inicio:
     employees = conexao_employees.query(Employees).limit(add_quantos_registros).all()
+elif adicionar_entre_os_ids:
+    employees = conexao_employees.query(Employees).filter(Employees.emp_no.between(id_inicial, id_final))
 else:
     employees = conexao_employees.query(Employees).all()
 print("Employees carregado na memória...")
@@ -94,8 +106,7 @@ for emp in employees:
 print("Registros adicionados")
 print("Concluído!")
 
-# print("Visualizar registros adicionados...")
-# pesq = conexao_sdd.query(PesqMain).all()
-# print(pesq)
-
+#print("Visualizar registros adicionados...")
+#pesq = conexao_sdd.query(PesqMain).all()
+#print(pesq)
 
