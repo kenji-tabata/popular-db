@@ -1,6 +1,7 @@
 from conexao import Conexao
 from modelos import PesqMain, PesqComple, PesqPerf, Employees
 from datetime import date
+import random
 
 # Dados...
 conexao = Conexao()
@@ -10,7 +11,7 @@ conexao.host = "localhost"
 conexao.port = "3306"
 
 base_dados_exemplo      = 'employees'
-adicionar_na_base_dados = 'cli_apres'
+adicionar_na_base_dados = 'sdd_dom_apres'
 ver_registros_add       = False
 remover_add_tabelas     = False
 
@@ -20,10 +21,12 @@ add_quantos_registros = 20 # `None` para todos os registros
 
 # Adiciona a partir de um determinado intervalo, ideal para manter os regitros atuais
 adicionar_entre_os_ids = False
-id_inicial  = 11025
-id_final    = 11030
+id_inicial  = 1
+id_final    = 20
 
-cpf = "123.456.789-00"
+def retornar_cpf():
+    return str(random.randint(100, 999)) + "." + str(random.randint(100, 999)) + "." + str(random.randint(100, 999)) + "-" + str(random.randint(10, 99))
+
 alternativas = ""
 
 #
@@ -81,7 +84,7 @@ for emp in employees:
     # Adicionando registros do PesqMain
     novo_pesq_main = PesqMain(
         emp.emp_no, emp.first_name + " "+ emp.last_name, None, 'preenchido',
-        emp.gender, cpf, emp.titles.title
+        emp.gender, retornar_cpf(), emp.titles.title
     )
     conexao_sdd.add(novo_pesq_main)
     conexao_sdd.commit()
