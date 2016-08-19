@@ -27,7 +27,20 @@ id_final    = 20
 def retornar_cpf():
     return str(random.randint(100, 999)) + "." + str(random.randint(100, 999)) + "." + str(random.randint(100, 999)) + "-" + str(random.randint(10, 99))
 
-alternativas = ""
+def retornar_valor(alternativas):
+    alternativa = random.randint(1, 82)
+    if alternativa not in alternativas:
+        return alternativa
+    return retornar_valor(alternativas)
+
+def retornar_alternativas():
+    alternativas = []
+    limite = random.randint(11, 82)
+    for alt in range(limite):
+        alternativas.append(retornar_valor(alternativas))
+
+    alternativas = str(sorted(alternativas))
+    return alternativas.replace("[","").replace("]","")
 
 #
 # Executando conexões...
@@ -98,7 +111,7 @@ for emp in employees:
 
     # Adicionando registros do PesqPerf
     novo_pesq_perf = PesqPerf(
-        emp.emp_no, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, alternativas, '', ''
+        emp.emp_no, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, retornar_alternativas(), '', ''
     )
     conexao_sdd.add(novo_pesq_perf)
     conexao_sdd.commit()
